@@ -225,7 +225,10 @@ body {
 .bar-row { display: grid; grid-template-columns: 150px 1fr auto; align-items: center; gap: 10px; margin: 5px 0; font-size: 0.82rem; }
 .bar-row .lbl { color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bar-track { background: var(--line); border-radius: 6px; height: 16px; overflow: hidden; }
-.bar-fill { height: 100%; background: var(--ksp-blue); border-radius: 6px; }
+/* display:block is required here — .bar-fill is a <span> (inline by default),
+   and inline elements ignore the width:% set inline by barChart() in app.js,
+   so without this the value-proportional fill silently never rendered. */
+.bar-fill { display: block; height: 100%; background: var(--ksp-blue); border-radius: 6px; }
 .bar-row .val { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
 
 /* Map (self-contained SVG scatter) */
