@@ -1,12 +1,17 @@
 'use strict';
 
 // API base: same-origin '' works on the local dev server (routes mounted at
-// root). On Catalyst, the web client and function share a domain and the
-// function lives under /server/suraksha_api.
+// root). On Catalyst, Slate (this static site) and the Serverless function
+// live on DIFFERENT subdomains — not the same origin — so production needs an
+// absolute URL. Get this from the function's "Invocation URL" in the Catalyst
+// console (Serverless > Functions > suraksha_api) if it ever changes, e.g.
+// after promoting from Development to Production. No trailing slash — every
+// call below does `${API_BASE}/path`.
+const CATALYST_FUNCTION_URL = 'https://suraksha-copilot-60076286960.development.catalystserverless.in/server/suraksha_api';
 const API_BASE =
   location.hostname === 'localhost' || location.hostname === '127.0.0.1'
     ? ''
-    : '/server/suraksha_api';
+    : CATALYST_FUNCTION_URL;
 
 const $ = (sel) => document.querySelector(sel);
 const feed = $('#feed');
