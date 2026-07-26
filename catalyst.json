@@ -1,8 +1,11 @@
 {
   "project_name": "suraksha-copilot",
-  "functions": [
-    "functions"
-  ],
+  "functions": {
+    "targets": [
+      "suraksha_api"
+    ],
+    "source": "functions"
+  },
   "client": {
     "source": "client"
   }
