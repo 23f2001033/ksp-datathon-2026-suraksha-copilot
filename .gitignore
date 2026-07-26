@@ -5,5 +5,10 @@ node_modules/
 .catalyst/
 .DS_Store
 functions/*/data/*.db
+# The seeded demo database IS committed on purpose: Catalyst deploys straight
+# from this GitHub branch with no build/seed step, so the function needs the
+# .db file present in the repo or every query fails at runtime. It's fully
+# synthetic (scripts/seed.js), 1.1MB, no real personal data.
+!functions/suraksha_api/data/crime.db
 !functions/*/data/.gitkeep
 audit-log.jsonl
