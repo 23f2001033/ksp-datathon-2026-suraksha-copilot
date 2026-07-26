@@ -72,12 +72,17 @@ function barChart(rows) {
   const max = Math.max(...top.map((r) => r[valueCol] || 0), 1);
   const wrap = el('<div class="chart"></div>');
   for (const r of top) {
-    const pct = ((r[valueCol] || 0) / max) * 100;
+    const v = r[valueCol] || 0;
+    const frac = v / max;
+    const pct = frac * 100;
+    // Fill color intensity encodes quantity too (not just bar length) — same
+    // single-hue sequential ramp as the choropleth, so "more" always reads as
+    // "darker blue" consistently across the whole app.
     const row = el(`
-      <div class="bar-row" title="${esc(r[labelCol])}: ${esc(r[valueCol])}">
+      <div class="bar-row" title="${esc(r[labelCol])}: ${esc(v)}">
         <span class="lbl">${esc(r[labelCol])}</span>
-        <span class="bar-track"><span class="bar-fill" style="width:${pct}%"></span></span>
-        <span class="val">${esc(r[valueCol])}</span>
+        <span class="bar-track"><span class="bar-fill" style="width:${pct}%;background:${lerpBlue(0.25 + frac * 0.75)}"></span></span>
+        <span class="val">${esc(v)}</span>
       </div>`);
     wrap.appendChild(row);
   }
