@@ -1,0 +1,9 @@
+{
+  "project_name": "suraksha-copilot",
+  "functions": [
+    "functions"
+  ],
+  "client": {
+    "source": "client"
+  }
+}

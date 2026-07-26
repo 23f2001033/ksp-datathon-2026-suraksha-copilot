@@ -1,0 +1,16 @@
+{
+  "name": "suraksha_api",
+  "version": "0.1.0",
+  "description": "Suraksha Copilot backend — 3-tier reliable query engine over the KSP crime database.",
+  "main": "index.js",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "sql.js": "^1.13.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.7"
+  },
+  "license": "MIT"
+}

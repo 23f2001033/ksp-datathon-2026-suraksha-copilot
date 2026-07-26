@@ -1,0 +1,12 @@
+{
+  "deployment": {
+    "name": "suraksha_api",
+    "type": "advancedio",
+    "stack": "node20",
+    "memory": 512,
+    "timeout": 120
+  },
+  "execution": {
+    "main": "index.js"
+  }
+}

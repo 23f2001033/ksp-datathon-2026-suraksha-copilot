@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Suraksha Copilot — KSP Crime Intelligence</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <span class="radar"></span>
+      </div>
+      <div class="brand-text">
+        <strong>Suraksha Copilot</strong>
+        <span class="brand-sub">Karnataka State Police · Crime Intelligence</span>
+      </div>
+    </div>
+    <div class="topbar-controls">
+      <label class="field">
+        <span>Officer</span>
+        <select id="userSelect" aria-label="Acting officer"></select>
+      </label>
+      <span id="engineBadge" class="engine-badge" title="Which reasoning engine is active">…</span>
+      <button id="auditBtn" class="ghost-btn" type="button">Audit log</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="chat" aria-label="Command center and conversation">
+      <div id="scopeNote" class="scope-note"></div>
+      <div id="scroll" class="scroll">
+        <section id="dashboard" class="dashboard" aria-label="Command dashboard"></section>
+        <div class="copilot-intro">
+          <div class="copilot-intro-head">💬 Ask the copilot — English or Kannada</div>
+          <p>Every answer shows the exact query, the evidence, and a court-ready audit trail — and says <em>"I can't answer that reliably"</em> rather than guess.</p>
+          <div id="samples" class="samples"></div>
+        </div>
+        <div id="feed" class="feed"></div>
+      </div>
+      <form id="askForm" class="composer" autocomplete="off">
+        <button type="button" id="langBtn" class="lang-btn" title="Voice input language">EN</button>
+        <button type="button" id="micBtn" class="mic-btn" title="Speak your question" aria-label="Voice input">🎤</button>
+        <input id="questionInput" type="text" placeholder="e.g. Where are the chain snatching hotspots in Bengaluru over the last 6 months?" aria-label="Your question" />
+        <button type="submit" id="askBtn">Ask</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Justification modal (person-level governance gate) -->
+  <div id="justifyModal" class="modal-backdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="justifyTitle">
+      <h2 id="justifyTitle">Justification required</h2>
+      <p id="justifyMsg"></p>
+      <input id="justifyInput" type="text" placeholder="Case ID or investigative reason (e.g. CR-2026/00554)" />
+      <div class="modal-actions">
+        <button id="justifyCancel" type="button" class="ghost-btn">Cancel</button>
+        <button id="justifyProceed" type="button">Proceed &amp; log</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit drawer -->
+  <aside id="auditDrawer" class="drawer" hidden aria-label="Audit log">
+    <div class="drawer-head">
+      <strong>Audit log</strong>
+      <button id="auditClose" class="ghost-btn" type="button">Close</button>
+    </div>
+    <div id="auditStatus" class="audit-status"></div>
+    <div id="auditList" class="audit-list"></div>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>

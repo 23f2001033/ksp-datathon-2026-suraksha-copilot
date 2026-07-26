@@ -1,0 +1,15 @@
+{
+  "name": "suraksha-copilot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Explainable, bilingual AI investigation copilot for the KSP crime database (KSP Datathon 2026).",
+  "scripts": {
+    "postinstall": "cd functions/suraksha_api && npm install",
+    "seed": "node scripts/seed.js",
+    "dev": "node functions/suraksha_api/server.js",
+    "smoke": "node scripts/smoke.js",
+    "eval": "node scripts/eval.js",
+    "eval:llm": "node scripts/eval.js --llm"
+  },
+  "license": "MIT"
+}

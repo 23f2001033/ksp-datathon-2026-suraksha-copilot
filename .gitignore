@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.local
+*.log
+.catalyst/
+.DS_Store
+functions/*/data/*.db
+!functions/*/data/.gitkeep
+audit-log.jsonl
