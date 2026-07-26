@@ -119,11 +119,18 @@ const INHERITABLE = ['district', 'crime_type', 'months'];
  * Cues: pronouns/ellipsis ("there", "same"), continuation openers ("and",
  * "what about"), or a very short fragment ("in Mysuru?", "ಮೈಸೂರಿನಲ್ಲಿ?").
  */
-function isFollowUp(question) {
+function isFollowUp(question, base) {
   const lower = question.toLowerCase().trim();
   if (/\b(there|that area|those|same|these)\b/.test(lower)) return true;
   if (/^(and|what about|how about|also|now|then)\b/.test(lower)) return true;
-  if (lower.split(/\s+/).filter(Boolean).length <= 4) return true;
+  // A short fragment only counts as a continuation if it actually carries a
+  // recognizable value (a district, crime type, timeframe, ...) — otherwise
+  // ANY short utterance ("hii", "thanks", "ok") matched this catch-all and
+  // silently re-answered the previous question instead of prompting again
+  // (caught live: typing "hii" after a hotspots query repeated the same
+  // hotspots answer).
+  const words = lower.split(/\s+/).filter(Boolean);
+  if (words.length <= 4 && base && base.slots && Object.keys(base.slots).length > 0) return true;
   return false;
 }
 
@@ -132,7 +139,7 @@ function classify(question, history) {
   const prev = Array.isArray(history)
     ? [...history].reverse().find((h) => h && h.decision && h.decision !== 'abstain' && h.slots)
     : null;
-  if (!prev || !isFollowUp(question)) return base;
+  if (!prev || !isFollowUp(question, base)) return base;
 
   // Inherit contextual slots the follow-up did not respecify.
   const inherited = [];

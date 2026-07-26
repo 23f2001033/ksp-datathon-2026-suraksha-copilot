@@ -541,15 +541,24 @@ function exportBrief(res) {
 }
 
 // ---------- ask flow ---------------------------------------------------------
+// #feed itself never overflows — its parent #scroll (which also wraps the
+// dashboard above it) is the actual scrolling element, so the old
+// `feed.scrollTop = feed.scrollHeight` was a no-op and every new answer
+// landed below the fold with no indication it had arrived. scrollIntoView
+// walks up to whichever ancestor actually scrolls, so it works regardless.
+function scrollToNode(node) {
+  node.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 function appendUser(q) {
   feed.querySelector('.welcome')?.remove();
-  feed.appendChild(el(`<div class="msg user"><div class="bubble-user">${esc(q)}</div></div>`));
-  feed.scrollTop = feed.scrollHeight;
+  const node = el(`<div class="msg user"><div class="bubble-user">${esc(q)}</div></div>`);
+  feed.appendChild(node);
+  scrollToNode(node);
 }
 function appendThinking() {
   const node = el(`<div class="msg"><div class="card"><div class="thinking"><span></span><span></span><span></span></div></div></div>`);
   feed.appendChild(node);
-  feed.scrollTop = feed.scrollHeight;
+  scrollToNode(node);
   return node;
 }
 
@@ -596,10 +605,12 @@ async function ask(question, justification, direct) {
     const node = el(`<div class="msg"></div>`);
     node.appendChild(renderResult(res));
     feed.appendChild(node);
-    feed.scrollTop = feed.scrollHeight;
+    scrollToNode(node);
   } catch (err) {
     thinking.remove();
-    feed.appendChild(el(`<div class="msg"><div class="card"><div class="answer">Network error: ${esc(err.message)}</div></div></div>`));
+    const errNode = el(`<div class="msg"><div class="card"><div class="answer">Network error: ${esc(err.message)}</div></div></div>`);
+    feed.appendChild(errNode);
+    scrollToNode(errNode);
   }
 }
 
