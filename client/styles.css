@@ -150,7 +150,11 @@ body {
 .samples { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* Choropleth */
-.choro-wrap { position: relative; }
+/* max-width caps the SVG's rendered size: Karnataka's outline is taller than
+   it is wide, so letting it stretch to a full-width "wide" panel on a large
+   monitor balloons the height to fill the viewport, pushing the hover-info
+   panel and legend far below the fold. */
+.choro-wrap { position: relative; max-width: 560px; margin: 0 auto; }
 .choro-wrap svg { width: 100%; height: auto; display: block; }
 /* Explicit default fill: an SVG path with no fill attribute (the "no data"
    case) defaults to solid black — this rule is what actually prevents that,
@@ -159,7 +163,7 @@ body {
 .choro-district { fill: var(--line); fill-opacity: 0.5; stroke: var(--panel); stroke-width: 0.6; transition: stroke-width .1s, stroke .1s, fill-opacity .1s; cursor: pointer; }
 .choro-district:hover { stroke: var(--ink); stroke-width: 1.4; fill-opacity: 0.75; }
 .choro-district.nodata { cursor: default; }
-.choro-district.nodata:hover { stroke: var(--panel); stroke-width: 0.6; fill-opacity: 0.5; }
+.choro-district.nodata:hover { stroke: var(--muted); stroke-width: 1; fill-opacity: 0.6; }
 .choro-hover-info {
   min-height: 34px; display: flex; align-items: center; gap: 8px;
   margin-top: 8px; padding: 8px 12px; border-radius: 8px;
