@@ -328,16 +328,30 @@ function choroplethMap(rows, onDistrict) {
     const hasData = typeof v === 'number' && v > 0;
     const fill = hasData ? `fill="${lerpBlue(v / max)}"` : '';
     const cls = hasData ? 'choro-district' : 'choro-district nodata';
-    return `<path class="${cls}" data-d="${esc(name)}" ${fill} d="${pathFor(f.geometry)}"><title>${esc(name)}${hasData ? ': ' + esc(v) + ' incidents — click to drill in' : ' (no data in your scope)'}</title></path>`;
+    return `<path class="${cls}" data-d="${esc(name)}" data-v="${hasData ? v : ''}" ${fill} d="${pathFor(f.geometry)}"><title>${esc(name)}${hasData ? ': ' + esc(v) + ' incidents — click to drill in' : ' (no data in your scope)'}</title></path>`;
   }).join('');
   wrap.appendChild(el(`<svg viewBox="0 0 ${W.toFixed(0)} ${H.toFixed(0)}" role="img" aria-label="Karnataka crime intensity by district">${paths}</svg>`));
+  const info = el(`<div class="choro-hover-info">Hover a district to see its name and incident count.</div>`);
+  wrap.appendChild(info);
   wrap.appendChild(el(`<div class="choro-legend"><span>low</span><span class="choro-bar"></span><span>high (${max})</span><span style="margin-left:auto">click a district to drill in</span></div>`));
 
-  if (onDistrict) {
-    wrap.querySelectorAll('.choro-district:not(.nodata)').forEach((p) => {
-      p.addEventListener('click', () => onDistrict(p.dataset.d));
+  wrap.querySelectorAll('.choro-district').forEach((p) => {
+    const name = p.dataset.d;
+    const v = p.dataset.v;
+    p.addEventListener('mouseenter', () => {
+      info.classList.add('active');
+      info.innerHTML = v
+        ? `<span class="name">${esc(name)}</span><span class="stat">${esc(v)} incidents</span><span>(last 90 days) — click to drill in</span>`
+        : `<span class="name">${esc(name)}</span><span>no data in your current scope</span>`;
     });
-  }
+    p.addEventListener('mouseleave', () => {
+      info.classList.remove('active');
+      info.textContent = 'Hover a district to see its name and incident count.';
+    });
+    if (onDistrict && v) {
+      p.addEventListener('click', () => onDistrict(name));
+    }
+  });
   return wrap;
 }
 
@@ -546,9 +560,18 @@ async function ask(question, justification, direct) {
   const thinking = appendThinking();
 
   try {
+    // Content-Type is deliberately text/plain, not application/json: Catalyst's
+    // Advanced I/O edge answers CORS preflight (OPTIONS) requests itself with a
+    // bare 200 and no Access-Control-Allow-* headers, before our Express app
+    // (and its correct cors() middleware) ever sees the request — so any
+    // preflight-triggering header fails silently in the browser as "Failed to
+    // fetch" (curl doesn't enforce CORS, so this was invisible to server-side
+    // testing). text/plain is a CORS-safelisted content type, so the browser
+    // sends this as a "simple" request with no preflight at all. The server
+    // still parses it as JSON (see express.json({ type: [...] }) in app.js).
     const r = await fetch(`${API_BASE}/ask`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
       body: JSON.stringify({
         question,
         userId: u.id,

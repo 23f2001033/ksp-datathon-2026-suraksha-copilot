@@ -152,9 +152,25 @@ body {
 /* Choropleth */
 .choro-wrap { position: relative; }
 .choro-wrap svg { width: 100%; height: auto; display: block; }
-.choro-district { stroke: var(--panel); stroke-width: 0.6; transition: stroke-width .1s, stroke .1s; cursor: pointer; }
-.choro-district:hover { stroke: var(--ink); stroke-width: 1.4; }
+/* Explicit default fill: an SVG path with no fill attribute (the "no data"
+   case) defaults to solid black — this rule is what actually prevents that,
+   giving no-data districts a soft neutral tone instead of a black blob. Paths
+   WITH data get an inline fill="" that overrides this. */
+.choro-district { fill: var(--line); fill-opacity: 0.5; stroke: var(--panel); stroke-width: 0.6; transition: stroke-width .1s, stroke .1s, fill-opacity .1s; cursor: pointer; }
+.choro-district:hover { stroke: var(--ink); stroke-width: 1.4; fill-opacity: 0.75; }
 .choro-district.nodata { cursor: default; }
+.choro-district.nodata:hover { stroke: var(--panel); stroke-width: 0.6; fill-opacity: 0.5; }
+.choro-hover-info {
+  min-height: 34px; display: flex; align-items: center; gap: 8px;
+  margin-top: 8px; padding: 8px 12px; border-radius: 8px;
+  background: var(--surface); border: 1px solid var(--line);
+  font-size: 0.8rem; color: var(--muted); transition: background .1s;
+}
+.choro-hover-info.active { color: var(--ink); border-color: var(--ksp-blue); }
+.choro-hover-info .name { font-weight: 700; color: var(--ink); }
+.choro-hover-info .stat { font-family: var(--mono); color: var(--ksp-blue); font-weight: 700; }
+:root[data-theme="dark"] .choro-hover-info .stat,
+@media (prefers-color-scheme: dark) { .choro-hover-info .stat { color: #7ea6dd; } }
 .choro-legend { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 0.68rem; color: var(--muted); }
 .choro-bar { height: 10px; width: 120px; border-radius: 3px; background: linear-gradient(90deg, #dce6f2, #244d82); }
 .chip {

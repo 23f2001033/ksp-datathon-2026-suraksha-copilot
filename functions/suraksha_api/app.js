@@ -125,7 +125,12 @@ function buildRouter() {
 function createApp(options = {}) {
   const app = express();
   app.use(cors());
-  app.use(express.json({ limit: '256kb' }));
+  // Accept text/plain as JSON too — the client sends POST bodies as text/plain
+  // on purpose (see the matching comment in client/app.js) to keep CORS
+  // preflight-free, since Catalyst's edge answers OPTIONS itself without ever
+  // reaching this app, stripping the Access-Control-Allow-* headers our own
+  // cors() middleware would otherwise set.
+  app.use(express.json({ limit: '256kb', type: ['application/json', 'text/plain'] }));
 
   const router = buildRouter();
   // Mount at root (local dev) and under the Catalyst function path so the same
