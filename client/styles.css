@@ -156,15 +156,22 @@ body {
    panel and legend far below the fold. */
 .choro-wrap { position: relative; max-width: 380px; margin: 0 auto; }
 .choro-wrap svg { width: 100%; height: auto; display: block; }
-/* Explicit default fill: an SVG path with no fill attribute (the "no data"
-   case) defaults to solid black — this rule is what actually prevents that,
-   giving no-data districts a soft neutral tone instead of a black blob. Paths
-   WITH data get an inline fill="" that overrides this. */
-.choro-district { fill: var(--line); fill-opacity: 0.5; stroke: var(--panel); stroke-width: 0.6; transition: stroke-width .1s, stroke .1s, fill-opacity .1s; cursor: pointer; }
-/* Same hover stroke for every district regardless of data — only 10 of 27
-   currently carry data, and giving those a duller highlight than the rest
-   made most of the map look unresponsive to hover. */
-.choro-district:hover, .choro-district.nodata:hover { stroke: var(--ink); stroke-width: 1.4; fill-opacity: 0.75; }
+/* No `fill` here on purpose: a CSS property, even from a low-specificity
+   class selector, always beats an SVG presentation attribute — so setting
+   fill here would silently override every district's data-driven inline
+   fill="rgb(...)" from lerpBlue(), flattening the whole choropleth to one
+   color regardless of value (this actually happened; caught via screenshot
+   showing zero color variation despite a working legend/max calc). Only
+   .nodata paths (which never get an inline fill attribute) need a fallback
+   color, since an SVG path with no fill at all defaults to solid black. */
+.choro-district { fill-opacity: 0.9; stroke: var(--panel); stroke-width: 0.6; transition: fill-opacity .1s; cursor: pointer; }
+.choro-district.nodata { fill: var(--line); fill-opacity: 0.35; cursor: default; }
+/* Only fill-opacity transitions on hover, not stroke-width — animating
+   stroke-width forces the browser to re-rasterize the whole (fairly complex,
+   many-vertex) district outline every frame, which is what was causing the
+   hover lag. Stroke-width still changes, just as an instant jump instead of
+   an animated one. */
+.choro-district:hover, .choro-district.nodata:hover { stroke: var(--ink); stroke-width: 1.4; fill-opacity: 1; }
 .choro-district.nodata { cursor: default; }
 .choro-hover-info {
   min-height: 34px; display: flex; align-items: center; gap: 8px;
